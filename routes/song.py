@@ -23,7 +23,7 @@ router =APIRouter()
 cloudinary.config(
     cloud_name = "dpwfpbvlz",
     api_key = api_key,
-    api_secret = api_secret, # Click 'View API Keys' above to copy your API secret
+    api_secret = api_secret,
     secure=True
 )
 
