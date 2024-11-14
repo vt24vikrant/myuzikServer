@@ -1,7 +1,9 @@
+import os
 import uuid
 
 import cloudinary
 import cloudinary.uploader
+from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, File, Form, UploadFile
 from sqlalchemy.orm import Session
 
@@ -9,13 +11,19 @@ from database import get_db
 from middleware.auth_middleware import auth_middleware
 from models.song import Song
 
+load_dotenv('.env')
+
+api_key: str=os.getenv('CLOUDINARY_KEY')
+api_secret: str=os.getenv('CLOUDINARY_SECRET')
+
+
 router =APIRouter()
 
 # Configuration
 cloudinary.config(
     cloud_name = "dpwfpbvlz",
-    api_key = "696546442596529",
-    api_secret = "1JfbEbNWOMx-pXBUQbk3U_3cctY", # Click 'View API Keys' above to copy your API secret
+    api_key = api_key,
+    api_secret = api_secret, # Click 'View API Keys' above to copy your API secret
     secure=True
 )
 
@@ -51,4 +59,9 @@ def upload_song(song:UploadFile=File(...),
     db.refresh(new_song)
     
     return new_song
+
+@router.get('/list')
+def list_song(db:Session =Depends(get_db),auth_details=Depends(auth_middleware)):
+    songs=db.query(Song).all()
+    return songs
     
